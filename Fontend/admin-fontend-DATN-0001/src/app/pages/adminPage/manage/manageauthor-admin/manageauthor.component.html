@@ -1,0 +1,310 @@
+<!-- Form Start -->
+<ng-toast></ng-toast>
+<div class="container-fluid pt-4 px-4">
+  <div class="row g-4">
+    <div class="col-sm-12 col-xl-6">
+      <div class="bg-secondary rounded h-100 p-4">
+        <h6 class="mb-3 text-uppercase">AUTHOR MANAGEMENT</h6>
+
+        <form (ngSubmit)="onSubmit()">
+          <input
+            type="text"
+            class="form-control"
+            id="id"
+            name="id"
+            [(ngModel)]="Author.id"
+            hidden
+          />
+
+          <div class="form-group mb-3">
+            <label for="fullname">Author name</label> <br/>
+            <br/>
+
+            <input
+              type="text"
+              class="form-control"
+              id="fullname"
+              name="fullname"
+              [(ngModel)]="Author.fullname"
+            />
+            <span
+              *ngIf="errorFieldsArr.includes('fullname')"
+              class="text-warning"
+            >*Please enter the music author name</span
+            >
+            <span
+              *ngIf="errorFieldsArr.includes('existAuthorName')"
+              class="text-warning"
+            >Author name already exists</span
+            >
+          </div>
+          <label class="form-label">Active</label> <br/>
+          <div class="btn-group mb-3" role="group">
+            <input
+              type="radio"
+              class="btn-check"
+              name="active"
+              id="btnradio1"
+              autocomplete="off"
+              checked
+              [value]="true"
+              [(ngModel)]="Author.active"
+            />
+            <label class="btn btn-outline-primary" for="btnradio1"
+            >Active</label
+            >
+
+            <input
+              type="radio"
+              class="btn-check"
+              name="active"
+              id="btnradio3"
+              autocomplete="off"
+              [(ngModel)]="Author.active"
+              [value]="false"
+            />
+            <label class="btn btn-outline-primary" for="btnradio3"
+            >Inactive</label
+            >
+          </div>
+          <div class="form-group mb-3">
+            <label for="description">Description</label>
+            <br/>
+            <br/>
+            <textarea
+              type="text"
+              class="form-control"
+              id="description"
+              rows="5"
+              name="description"
+              [(ngModel)]="Author.description"
+            ></textarea>
+          </div>
+
+          <div class="form-group me-3 mb-3">
+            <label>Image</label>
+            <div class="file-upload">
+              <button
+                class="file-upload-btn"
+                type="button"
+                onclick="$('.file-upload-input').trigger( 'click' )"
+              >
+                Add Image
+              </button>
+              <div class="image-upload-wrap">
+                <input
+                  class="file-upload-input"
+                  type="file"
+                  #fileInput
+                  (change)="onFileSelected($event)"
+                  accept="image/*"
+                />
+
+                <div class="drag-text">
+                  <h3>Drag and drop a file or select add Image</h3>
+                </div>
+              </div>
+              <div class="file-upload-content">
+                <img
+                  class="file-upload-image"
+                  [src]="imageUrl"
+                  alt="{{ imageUrl }}"
+                />
+                <div class="image-title-wrap">
+                  <button
+                    type="button"
+                    (click)="removeUpload()"
+                    class="remove-image"
+                  >
+                    Remove <span class="image-title">Uploaded Image</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="text-center">
+            <button
+              (click)="saveAuthor()"
+              class="btn btn-primary fw-bold"
+              *ngIf="Author.id == null"
+            >
+              Save
+            </button>
+            <button
+              (click)="updateAuthor(Author.id)"
+              class="btn btn-info ms-3 fw-bold"
+              *ngIf="Author.id != null"
+            >
+              Update
+            </button>
+            <button
+              (click)="deleteAuthor(Author.id)"
+              class="btn btn-danger ms-3 fw-bold"
+              *ngIf="Author.id != null"
+            >
+              Delete
+            </button>
+            <button (click)="resetForm()" class="btn btn-warning ms-3 fw-bold">
+              Reset
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="col-sm-12 col-xl-6">
+      <div class="bg-secondary rounded h-100 p-4">
+        <h6 class="mb-3">AUTHOR LIST</h6>
+        <!-- <input
+          type="text"
+          class="form-control mb-4 border-light border-2"
+          style="border-radius: 20px"
+          placeholder="Search"
+        /> -->
+
+        <input
+          type="text"
+          class="form-control mb-4 border-light border-2"
+          style="border-radius: 20px"
+          placeholder="Search"
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="search()"
+          (keyup)="onKey($event)"
+        />
+        <!-- <mat-autocomplete autoActiveFirstOption #auto>
+          <mat-option
+            (click)="addSingertoTable(item)"
+            *ngFor="let item of filterOptions | async"
+            value="{{ item }}"
+            >{{ item }}</mat-option
+          >
+        </mat-autocomplete> -->
+        <table class="table table-hover">
+          <thead>
+          <tr>
+            <th scope="col">*</th>
+            <th scope="col">Author name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Image</th>
+            <th scope="col">Action</th>
+          </tr>
+          </thead>
+          <tbody
+            class="align-middle"
+            *ngIf="Authors && Authors.length > 0; else noDataMessage"
+          >
+          <tr *ngFor="let item of Authors; let i = index">
+            <th scope="row">{{ i + 1 }}</th>
+            <td>{{ item.fullname }}</td>
+            <td>{{ item.description }}</td>
+            <td>
+              <img
+                src="{{ item.image }}"
+                width="70"
+                height="70"
+                alt="{{ item.image }}"
+              />
+            </td>
+
+            <td>
+              <button
+                (click)="getAuthor(item.id)"
+                class="btn btn-outline-info me-3"
+              >
+                Detail
+              </button>
+              <button (click)="inactive(item.id)" class="btn btn-outline-danger">
+                Inactive
+              </button>
+            </td>
+          </tr>
+          </tbody>
+          <ng-template #noDataMessage>
+            <tr>
+              <td colspan="4">
+                <p class="text-center text-danger">No data available.</p>
+              </td>
+            </tr>
+          </ng-template>
+        </table>
+
+      </div>
+    </div>
+    <div class="col-sm-12 col-xl-12">
+      <div class="bg-secondary rounded h-100 p-4">
+        <h6 class="mb-3">INACTIVE AUTHOR LIST</h6>
+        <!-- <input
+          type="text"
+          class="form-control mb-4 border-light border-2"
+          style="border-radius: 20px"
+          placeholder="Search"
+        /> -->
+
+        <input
+          type="text"
+          class="form-control mb-4 border-light border-2"
+          style="border-radius: 20px"
+          placeholder="Search"
+          [(ngModel)]="searchTerm2"
+          (ngModelChange)="search2()"
+          (keyup)="onKey($event)"
+        />
+        <table class="table table-hover">
+          <thead>
+          <tr>
+            <th scope="col">*</th>
+            <th scope="col">Author name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Image</th>
+            <th scope="col">Action</th>
+          </tr>
+          </thead>
+          <tbody
+            class="align-middle"
+            *ngIf="AuthorsInactive.length > 0"
+          >
+          <tr *ngFor="let item of AuthorsInactive; let i = index">
+            <th scope="row">{{ i + 1 }}</th>
+            <td>{{ item.fullname }}</td>
+            <td>{{ item.description }}</td>
+            <td>
+              <img
+                src="{{ item.image }}"
+                width="70"
+                height="70"
+                alt="{{ item.image }}"
+              />
+            </td>
+
+            <td>
+              <button
+                (click)="getAuthor(item.id)"
+                class="btn btn-outline-info me-3"
+              >
+                Detail
+              </button>
+              <button (click)="restore(item)" class="btn btn-outline-warning">
+                Restore
+              </button>
+            </td>
+          </tr>
+          </tbody>
+          <ng-template #noDataMessage>
+            <tr>
+              <td colspan="4">
+                <p class="text-center text-danger">No data available.</p>
+              </td>
+            </tr>
+          </ng-template>
+        </table>
+        <div class="text-center">
+          <!-- <pagination-controls
+            (pageChange)="p = $event"
+            id="CountUser2"
+          ></pagination-controls> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Form End -->

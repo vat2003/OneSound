@@ -1,0 +1,115 @@
+<div class="detail-container">
+  <div class="detail-container-banner" id="category-detail">
+    <div class="detail-container-banner-first">
+      <img [src]="album.image" alt="" style="height: 300px; object-fit: cover"/>
+      <div class="detail-container-banner-content">
+        <h1>{{ album.title }}</h1>
+        <p>{{ album.releaseYear }}</p>
+        <p>
+          {{ album.description }}
+        </p>
+        <p>{{ songs.length }} songs (4:30:20)</p>
+      </div>
+    </div>
+
+    <div class="detail-container-banner-favicon">
+      <div class="detail-container-banner-favicon-cta">
+        <button (click)="playAll()">
+          <i *ngIf="!playall" class="fa-solid fa-play"></i>
+          <i *ngIf="playall" class="fa-solid fa-pause"></i>
+          Play
+        </button>
+        <button (click)="shuffle()"><i class="fa-solid fa-shuffle"></i>Shuffle</button>
+      </div>
+      <div class="detail-container-banner-favicon-more">
+        <div class="more-item">
+
+          <i *ngIf="this.acc" class="favorite fa-heart" [ngClass]="{
+              'fa-solid': isFavAlbum,
+              'fa-regular': !isFavAlbum
+            }" [ngStyle]="{ color: isFavAlbum === true ? 'rgb(212, 15, 15)' : '' }" (click)="favoriteAlbum()">
+          </i>
+          Add
+        </div>
+        <div class="more-item" (click)="share()">
+          <i class="fa-solid fa-arrow-up-from-bracket"></i>
+          <!--          <app-share-social type='facebook'-->
+          <!--                            [shareUrl]='link'></app-share-social>-->
+          Share
+        </div>
+        <div class="more-item">
+          <i class="fa-solid fa-ellipsis"></i>
+          More
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="list-tracks">
+  <div class="list-tracks-form-search">
+    <input type="text" class="search" name="search-music" style="border-radius: 20px" placeholder="Search"
+           [(ngModel)]="searchTerm" (ngModelChange)="search()" (keyup)="onKey($event)"/>
+    <div class="icon-search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+    </div>
+  </div>
+  <table>
+    <thead>
+    <tr>
+      <th></th>
+      <th>TITLE</th>
+      <th>ARTIST</th>
+      <th>AUTHOR</th>
+      <th>GENRE</th>
+      <th>TIME</th>
+      <th></th>
+    </tr>
+    </thead>
+    <tbody id="list-songs-detail">
+    <tr *ngFor="let song of songs" (click)="showDetail(song)">
+      <td>
+        <img [src]="song.image" alt=""/>
+      </td>
+      <td>
+        <div class="table-title">
+          <div class="line-clamp">{{ song.name }}</div>
+          <!--          <span class="table-song-type">MASTER</span>-->
+        </div>
+      </td>
+      <td>
+        <div>
+            <span *ngFor="let singer of singerMap[song.id]; let last = last">{{
+                singer.fullname
+              }}{{ !last && singerMap[song.id].length > 1 ? ", " : "" }}</span>
+        </div>
+      </td>
+      <td>
+        <div>
+            <span *ngFor="let singer of authorMap[song.id]; let last = last">
+              {{
+                singer.fullname
+              }}{{ !last && authorMap[song.id].length > 1 ? ", " : "" }}</span>
+        </div>
+      </td>
+      <td>
+        <div>
+            <span *ngFor="let singer of genreMap[song.id]; let last = last">{{
+                singer.name
+              }}{{ !last && genreMap[song.id].length > 1 ? ", " : "" }}</span>
+        </div>
+      </td>
+      <td>3:15</td>
+      <td>
+        <i class="fa-solid fa-plus" (click)="openDialog(song)"></i>&nbsp;&nbsp;
+        <!--          <i *ngIf="!this.acc" class="favorite fa-heart fa-regular" (click)="favoriteSong(song)"></i>-->
+        <i *ngIf="this.acc" class="favorite fa-heart" [ngClass]="{
+              'fa-solid': song.isFav,
+              'fa-regular': !song.isFav
+            }" [ngStyle]="{ color: song.isFav === true ? 'rgb(212, 15, 15)' : '' }" (click)="favoriteSong(song)">
+        </i>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

@@ -1,0 +1,44 @@
+.container {
+  text-align: center;
+  background-color: gray; /* Adjust background color as needed */
+  padding: 20px;
+}
+
+.social-buttons {
+  margin-top: 20px;
+}
+
+button {
+  padding: 10px 20px;
+  margin: 0 5px; /* Combine margin-right and margin-left */
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: background-color 0.3s ease;
+}
+
+button.facebook {
+  background-color: #3b5998;
+  color: #fff;
+}
+
+button.twitter {
+  background-color: #1da1f2;
+  color: #fff;
+}
+
+button.instagram {
+  background-color: #c32aa3;
+  background-color: red;
+  color: #fff;
+}
+
+button.linkedin {
+  background-color: #0077b5;
+  color: #fff;
+}
+
+button:hover {
+  opacity: 0.8;
+}

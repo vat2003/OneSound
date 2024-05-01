@@ -1,0 +1,43 @@
+<div class="container">
+  <hr>
+  <div style="width: 400px;"></div>
+  <h3>PLAYLIST ADDING...</h3>
+  <table class="table table-striped table-hover">
+    <thead>
+    <tr>
+      <th>Action</th>
+      <th>Playlist</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr *ngFor="let playlist of PlaylistTable">
+      <td class="playlist-action">
+        <label class="checkbox-container">
+          <input #viet type="checkbox" class="checkbox" [ngClass]="{'added': playlistSongMap[playlist.id ?? 0]}"
+                 (change)="toggleAddRemove(playlist)" [checked]="playlistSongMap[playlist.id ?? 0]">
+          <span class="checkmark"></span>
+        </label>
+        <span class="action-label">{{ viet.checked ? 'ADDED' : 'ADD' }}</span>
+      </td>
+      <td>
+        <a class="action-label">{{ playlist.name }}</a>
+      </td>
+    </tr>
+    </tbody>
+
+  </table>
+
+
+  <hr>
+  <div class="form-container">
+    <div class="form-group">
+      <label for="playlistName" class="form-label">Create new Playlist:</label>
+      <div class="input-button-container">
+        <input type="text" id="playlistName" placeholder="Enter playlist name" [(ngModel)]="playlistName"
+               class="form-input">
+        <button class="form-button" (click)="Playlist()">Create</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,167 @@
+<!-- Form Start -->
+<ng-toast></ng-toast>
+<div class="container-fluid pt-4 px-4">
+  <div class="row g-4">
+    <div class="col-sm-12 col-xl-6">
+      <div class="bg-secondary rounded h-100 p-4">
+        <h6 class="mb-3 text-uppercase">ARTIST MANAGEMENT</h6>
+
+        <form (ngSubmit)="onSubmit()">
+          <div class="form-group mb-3">
+            <label for="fullname">Artist name</label>
+            <input type="text" class="form-control" id="fullname" name="fullname" [(ngModel)]="singer.fullname">
+
+            <span *ngIf="errorFieldsArr.includes('name')" class="text-warning">*Please enter the
+              music genre name</span>
+            <span *ngIf="errorFieldsArr.includes('existGenreName')" class="text-warning">The name of
+              the music genre
+              already exists</span>
+          </div>
+
+
+          <div class="form-group mb-3">
+            <label for="description">Description</label>
+            <textarea type="text" class="form-control" id="description" rows="5" name="description"
+                      [(ngModel)]="singer.description"></textarea>
+
+          </div>
+          <div class="btn-group mb-3" role="group">
+            <input type="radio" class="btn-check" name="active" id="btnradio1" autocomplete="off" checked [value]="true"
+                   [(ngModel)]="singer.active"/>
+            <label class="btn btn-outline-primary" for="btnradio1">Active</label>
+
+            <input type="radio" class="btn-check" name="active" id="btnradio3" autocomplete="off"
+                   [(ngModel)]="singer.active" [value]="false"/>
+            <label class="btn btn-outline-primary" for="btnradio3">Inactive</label>
+          </div>
+          <div class="form-group m-3">
+            <label>Image</label>
+            <div class="file-upload">
+              <button class="file-upload-btn" type="button" onclick="$('.file-upload-input').trigger( 'click' )">Add
+                Image
+              </button>
+              <div class="image-upload-wrap">
+                <input class="file-upload-input" type='file' #fileInput (change)="onFileSelected($event)"
+                       accept="image/*"/>
+
+                <div class="drag-text">
+                  <h3>Drag and drop a file or select add Image</h3>
+                </div>
+              </div>
+              <div class="file-upload-content">
+                <img class="file-upload-image" [src]="imageUrl" alt="{{imageUrl}}"/>
+                <div class="image-title-wrap">
+                  <button type="button" (click)="removeUpload()" class="remove-image">Remove <span
+                    class="image-title">Uploaded Image</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="text-center">
+            <button (click)="saveSinger()" class="btn btn-primary w-50 fw-bold">Add</button>
+            <button (click)="updateSinger(singer.id)" class="btn btn-info w-50 fw-bold">Update</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+
+    <div class="col-sm-12 col-xl-6">
+      <div class="table-content-wrapper bg-secondary rounded h-100 p-4">
+        <h6 class="header-genre-list mb-4">ARTIST LIST</h6>
+        <input type="text" class="form-control mb-4 border-light border-2" style="border-radius: 20px"
+               placeholder="Search" [(ngModel)]="searchTerm" (ngModelChange)="search()" (keyup)="onKey($event)"/>
+
+        <table class="table table-hover" *ngIf="singers.length > 0">
+          <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Arist name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Image</th>
+            <th scope="col">Action</th>
+          </tr>
+          </thead>
+          <tbody>
+          <ng-container
+            *ngFor="let singer of singers | paginate: { itemsPerPage: pageSize, currentPage: pU,  id: 'albumActive' }; let i = index">
+            <tr *ngIf="singer.active">
+              <th scope="row">{{ i + 1 }}</th>
+              <td>{{ singer.fullname }}</td>
+              <td>
+                <img src="{{ singer.image }}" width="70" height="70" alt="{{ singer.image }}"/>
+              </td>
+              <td>{{ singer.description.slice(0, 70) }}</td>
+              <td>
+                <button (click)="getArtist(singer.id)" class="btn btn-outline-info w-100">Detail</button>
+                <button (click)="deleteSinger(singer.id)" class="btn btn-outline-danger w-100">Delete</button>
+              </td>
+            </tr>
+          </ng-container>
+          </tbody>
+        </table>
+
+        <span *ngIf="singers.length === 0" class="text-warning">No similar names</span>
+        <div class="d-flex justify-content-center" *ngIf="singer">
+          <nav aria-label="Page navigation" style="color:white">
+            <pagination-controls (pageChange)="pU = $event" id="albumActive"></pagination-controls>
+          </nav>
+        </div>
+      </div>
+    </div>
+
+    <div class="">
+      <div class="table-content-wrapper bg-secondary rounded h-100 p-4">
+        <h6 class="header-genre-list mb-4">INACTIVE ARTIST LIST</h6>
+        <input type="text" class="form-control mb-4 border-light border-2" style="border-radius: 20px"
+               placeholder="Search" [(ngModel)]="searchTerm" (ngModelChange)="search()" (keyup)="onKey($event)"/>
+
+
+        <table class="table table-hover" *ngIf="singers.length > 0">
+          <thead>
+          <tr>
+            <th scope="col">ID</th>
+            <th scope="col">Arist name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Image</th>
+            <th scope="col">Action</th>
+          </tr>
+          </thead>
+          <tbody>
+          <ng-container *ngFor="let singer of singers; let i = index">
+            <tr *ngIf="!singer.active">
+              <th scope="row">{{ i + 1 }}</th>
+              <td>{{ singer.fullname }}</td>
+              <td>
+                <img src="{{ singer.image }}" width="70" height="70" alt="{{ singer.image }}"/>
+              </td>
+              <td>{{ singer.description.slice(0, 70) }}</td>
+              <td>
+                <button (click)="getArtist(singer.id)" class="btn btn-outline-info w-100">Detail</button>
+                <button (click)="deleteSinger(singer.id)" class="btn btn-outline-danger w-100">Delete</button>
+              </td>
+            </tr>
+          </ng-container>
+          </tbody>
+          <ng-template #noInactiveDataMessage>
+            <tr>
+              <td colspan="10">
+                <p class="text-center text-danger">No inactive users available.</p>
+              </td>
+            </tr>
+          </ng-template>
+        </table>
+
+        <span *ngIf="singers.length === 0" class="text-warning">No similar names</span>
+        <div class="d-flex justify-content-center" *ngIf="singer">
+          <nav aria-label="Page navigation">
+            <!-- Pagination Code -->
+          </nav>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- Form End -->
